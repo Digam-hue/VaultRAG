@@ -9,3 +9,17 @@
 - Created Python virtual environment.
 - Added FastAPI and Uvicorn.
 - Added initial project documentation.
+
+
+## 2026-09-30 — Day 2
+
+### Added
+
+- Created `app/ingestion/` module.
+- Added first knowledge document.
+- Implemented basic text document loader.
+- Added document loader unit test.
+
+### Tests
+
+- All tests passing.

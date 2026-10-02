@@ -22,3 +22,22 @@
 - • httpx: A modern, fast HTTP client library used to send web requests (like GET and POST) in Python.
 
 - • assert: A Python keyword that checks if a condition is true; if the condition is false, it immediately stops execution and triggers a test failure.
+
+-  Why Path?
+from pathlib import Path
+
+- Python's pathlib gives us a clean way to work with file paths.
+
+- Instead of doing complicated string manipulation:
+
+- "data/documents/" + filename
+
+### with path.open("r", encoding="utf-8") as file:
+
+"r" means: read mode.
+
+encoding="utf-8" is important because company documents may eventually contain:
+Indian languages
+symbols
+accented characters
+special characters
