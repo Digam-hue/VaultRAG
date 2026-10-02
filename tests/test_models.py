@@ -13,8 +13,8 @@ def test_document_creation():
 
 
 def test_document_has_independent_metadata():
-    document_1 = Document("Document 1")
-    document_2 = Document("Document 2")
+    document_1 = Document(page_content="Document 1")
+    document_2 = Document(page_content="Document 2")
 
     document_1.metadata["source"] = "file1.txt"
 

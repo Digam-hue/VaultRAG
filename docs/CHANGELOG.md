@@ -41,3 +41,33 @@
 - Added Document model tests.
 - Added document builder tests.
 - All tests passing.
+
+
+
+## Day 5 — Ingestion Service
+
+### Added
+- IngestionConfig with validation.
+- Pydantic Document model.
+- SHA-256 content hashing.
+- Stable source-based document IDs.
+- IngestionService to coordinate loading,
+  chunking and document construction.
+- Integration tests for success and failure cases.
+
+### Security and limitations
+- Restricted ingestion to the configured directory.
+- Only TXT files are supported.
+- No database persistence or RBAC enforcement yet.
+
+
+
+
+## Decision: Ingestion Service
+
+- Keep ingestion logic independent of FastAPI.
+- Inject the documents directory and configuration.
+- Use Pydantic for configuration and document validation.
+- Use a stable source identity and a separate content hash.
+- Keep components independently testable.
+- Start with local TXT ingestion before adding more formats.

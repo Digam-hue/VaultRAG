@@ -106,3 +106,60 @@ Future metadata may include:
 - document type
 - version
 - created_at
+
+
+
+
+
+VaultRAG/
+├── app/
+│   ├── main.py
+│   ├── core/
+│   │   └── config.py             # New
+│   ├── ingestion/
+│   │   ├── __init__.py
+│   │   ├── loader.py             # Existing
+│   │   ├── chunker.py            # Existing
+│   │   ├── models.py             # Upgrade
+│   │   └── document_builder.py   # Upgrade
+│   └── services/
+│       ├── __init__.py           # New
+│       └── ingestion_service.py  # New
+├── data/
+│   └── documents/
+├── tests/
+│   ├── test_ingestion_service.py # New
+│   └── ...
+└── docs/
+
+
+
+## Ingestion Service
+
+Input:
+- A text file inside the configured documents directory.
+
+Pipeline:
+1. Validate file path and extension.
+2. Load text.
+3. Generate stable source identity.
+4. Calculate content hash.
+5. Split text into chunks.
+6. Build validated Document objects.
+
+Output:
+- A list of Document objects.
+- Each document contains page_content and metadata.
+
+Current metadata:
+- source
+- document_id
+- content_hash
+- chunk_id
+- chunk_count
+
+Limitations:
+- TXT files only.
+- No persistent storage yet.
+- No embedding generation yet.
+- No authentication or RBAC enforcement yet.

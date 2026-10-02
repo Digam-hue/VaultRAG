@@ -9,6 +9,8 @@ def test_create_documents():
     documents = create_documents(
         chunks=chunks,
         source="data/documents/leave_policy.txt",
+        document_id="doc-123",
+        content_hash="hash-123",
     )
 
     assert len(documents) == 2
@@ -31,6 +33,8 @@ def test_empty_chunks_are_skipped():
     documents = create_documents(
         chunks=chunks,
         source="test.txt",
+        document_id="doc-123",
+        content_hash="hash-123",
     )
 
     assert len(documents) == 2
