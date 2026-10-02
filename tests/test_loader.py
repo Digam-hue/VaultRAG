@@ -2,7 +2,7 @@ from app.ingestion.loader import load_text_file
 
 
 def test_load_text_file():
-    file_path = "data/documents/leave_poicy.txt"
+    file_path = "data/documents/leave_policy.txt"
 
     content = load_text_file(file_path)
 

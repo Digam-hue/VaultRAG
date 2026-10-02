@@ -21,7 +21,8 @@
 - • pytest: A popular third-party testing framework used to write and run Python code tests easily.
 - • httpx: A modern, fast HTTP client library used to send web requests (like GET and POST) in Python.
 
-- • assert: A Python keyword that checks if a condition is true; if the condition is false, it immediately stops execution and triggers a test failure.
+#### assert: 
+- A Python keyword that checks if a condition is true; if the condition is false, it immediately stops execution and triggers a test failure.
 
 -  Why Path?
 from pathlib import Path
@@ -41,3 +42,6 @@ Indian languages
 symbols
 accented characters
 special characters
+
+
+#### raise ValueError(...): Stops execution and crashes the program with a descriptive error message if invalid size inputs are provided.
