@@ -45,3 +45,15 @@ special characters
 
 
 #### raise ValueError(...): Stops execution and crashes the program with a descriptive error message if invalid size inputs are provided.
+
+#### productions minded improvement
+if  :
+chunks=["", "   "]
+
+Those aren't useful chunks.
+
+We don't want empty chunks entering our future embedding pipeline.
+- Validate data at component boundaries rather than letting bad data travel through the entire pipeline
+-       for chunk_id, chunk in enumerate(chunks):     
+            if not chunk.strip():
+                continue

@@ -23,3 +23,21 @@
 ### Tests
 
 - All tests passing.
+
+
+
+## Day 4 — Document Model and Metadata
+
+### Added
+
+- Document data model using dataclass.
+- Metadata support for ingested chunks.
+- Document builder component.
+- Source and chunk identifiers.
+- Empty chunk filtering.
+
+### Tests
+
+- Added Document model tests.
+- Added document builder tests.
+- All tests passing.

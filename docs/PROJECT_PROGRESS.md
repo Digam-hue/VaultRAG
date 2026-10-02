@@ -139,3 +139,14 @@ Document loading
 ## Next
 
 Understand and implement text chunking.
+
+
+## Day 4 Completed
+
+- [x] Created Document data model
+- [x] Added metadata support
+- [x] Created document builder
+- [x] Connected chunks to Document objects
+- [x] Added empty-chunk handling
+- [x] Added unit tests
+- [x] All tests passing

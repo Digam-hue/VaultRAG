@@ -72,3 +72,37 @@ pytest
 Document Loader
     ↓
 pytest
+
+
+
+## Ingestion Pipeline
+
+Knowledge File
+    ↓
+Text Loader
+    ↓
+Raw Text
+    ↓
+Text Chunker
+    ↓
+Text Chunks
+    ↓
+Document Builder
+    ↓
+Document Objects
+    ├── page_content
+    └── metadata
+
+Current metadata:
+
+- source
+- chunk_id
+
+Future metadata may include:
+
+- document_id
+- department
+- role/access level
+- document type
+- version
+- created_at
