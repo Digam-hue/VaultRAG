@@ -1,3 +1,27 @@
+File
+
+	
+
+What belongs there
+ARCHITECTURE.md
+Modules, how they connect, and the overall design
+
+PROJECT_PROGRESS.md
+Day-by-day progress, completed tasks, and next steps
+
+CHANGELOG.md
+Brief record of meaningful code changes
+
+DECISIONS.md
+Important design decisions and why we made them
+
+LEARNING.md
+Your learning notes: concepts, examples, trade-offs, and things you understand
+
+PROJECT_CONTEXT.md
+Project goals, tech stack, current implementation, commands, known issues, and a prompt to resume in a new chat
+
+
 ### __init__.py
 
 ##### → tells Python that these directories can be treated as packages.
@@ -386,3 +410,58 @@ documents root → reports/2026/a.pdf
 
 rather than storing the full absolute path.
 
+
+### Other important terms
+
+* **`Protocol`** → defines a common contract/interface that different embedding providers can follow.
+* **Structural typing** → if a class has the required methods with compatible types, it satisfies the `Protocol`; explicit inheritance isn't required.
+* **`Sequence[str]`** → ordered collection of strings; accepts both `list[str]` and `tuple[str, ...]`.
+* **`...` (Ellipsis)** → placeholder showing the `Protocol` method has no implementation here.
+* **Provider interchangeability** → OpenAI, Ollama, HuggingFace, or a custom provider can implement the same interface.
+* **Dependency inversion** → RAG code depends on `EmbeddingProvider` (interface), not a specific embedding model.
+* **`embed_documents` vs `embed_query`** → separate methods because document and query embeddings may use different processing/instructions.
+
+
+
+This is a **pytest test** that checks whether code raises the expected error.
+
+```python
+with pytest.raises(ValueError, match="Query text cannot be empty"):
+    service.embed_query("   ")
+```
+
+### Meaning
+
+> “When I call `embed_query("   ")`, I **expect a `ValueError`** with the message `"Query text cannot be empty"`.”
+
+Breakdown:
+
+* `pytest.raises(ValueError)` → expect a `ValueError`
+* `match="Query text cannot be empty"` → error message should match this text
+* `service.embed_query("   ")` → the actual code being tested
+* `"   "` → only spaces, so the function should consider it **empty**
+
+### Example
+
+If your function does:
+
+```python
+def embed_query(text):
+    if not text.strip():
+        raise ValueError("Query text cannot be empty")
+```
+
+Then this test passes:
+
+```python
+with pytest.raises(ValueError, match="Query text cannot be empty"):
+    service.embed_query("   ")
+```
+
+If `embed_query()` **doesn't raise an error**, the test fails.
+
+If it raises:
+
+```python
+ValueError("Something went wrong")
+```

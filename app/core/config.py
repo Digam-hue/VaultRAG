@@ -12,3 +12,7 @@ class IngestionConfig(BaseModel):
             )
         return self
     
+
+class EmbeddingConfig(BaseModel):
+    batch_size: int = Field(default=32, gt=0)
+    expected_dimensions: int | None = Field(default=None, gt=0)
