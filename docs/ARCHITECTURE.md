@@ -183,3 +183,26 @@ Current limitation:
 - No real embedding provider is configured yet.
 - The fake provider is used only in unit tests.
 - Embeddings are not persisted or used for retrieval yet.
+
+
+
+
+VaultRAG/
+└── app/
+    ├── main.py
+    ├── core/
+    │   └── config.py
+    ├── ingestion/
+    │   ├── __init__.py
+    │   ├── loader.py
+    │   ├── chunker.py
+    │   ├── models.py
+    │   └── document_builder.py
+    ├── embeddings/
+    │   ├── __init__.py
+    │   └── base.py
+    └── services/
+        ├── __init__.py
+        ├── ingestion_service.py
+        └── embedding_service.py
+- |----------------
