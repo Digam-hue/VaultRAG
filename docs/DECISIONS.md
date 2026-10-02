@@ -33,3 +33,20 @@ Each important component should eventually have its own tests.
 ### Reason
 
 This allows us to identify whether a problem comes from loading, chunking, embedding, retrieval, generation, or API integration.
+
+
+
+## Embedding Provider Abstraction
+
+Decision:
+Keep model-specific behavior behind an embedding provider interface.
+
+Reasons:
+- Avoid coupling retrieval to one embedding model.
+- Permit local and hosted providers to be evaluated separately.
+- Test batching and validation without downloading a model.
+- Validate vector dimensions before vectors reach storage.
+
+Trade-off:
+A provider implementation is still required before real semantic search
+can work.

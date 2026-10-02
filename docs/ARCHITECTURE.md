@@ -163,3 +163,23 @@ Limitations:
 - No persistent storage yet.
 - No embedding generation yet.
 - No authentication or RBAC enforcement yet.
+
+
+
+## Embedding Layer
+
+The embedding layer converts document chunks and user queries into numerical
+vectors through a provider-independent interface.
+
+Components:
+- `app/embeddings/base.py`: embedding provider contract.
+- `app/embeddings/config.py`: batch configuration.
+- `app/services/embedding_service.py`: batching and vector validation.
+
+The service validates vector dimensions, numeric values, and provider output
+counts. It does not depend on a specific model or vector database.
+
+Current limitation:
+- No real embedding provider is configured yet.
+- The fake provider is used only in unit tests.
+- Embeddings are not persisted or used for retrieval yet.

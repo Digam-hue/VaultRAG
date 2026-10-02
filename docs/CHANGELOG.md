@@ -71,3 +71,12 @@
 - Use a stable source identity and a separate content hash.
 - Keep components independently testable.
 - Start with local TXT ingestion before adding more formats.
+
+
+
+## Day 6 — Embedding Layer
+
+Added a provider-independent embedding service with batch processing,
+vector validation, and test coverage using a lightweight fake provider.
+
+No production embedding model or vector database has been connected yet.

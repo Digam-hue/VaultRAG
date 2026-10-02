@@ -153,3 +153,15 @@ Understand and implement te✔t chunking.
 
 
 
+## Day 6 — Embedding Layer
+
+- [✔] Added the provider interface.
+- [✔] Added configurable batch processing.
+- [✔] Added vector validation.
+- [✔] Added embedding service tests.
+- [✔] Full test suite passes.
+- [✔] Changes committed and pushed.
+
+Next: select and implement a real embedding provider, then connect
+document chunks to vector storage and retrieval.
+
