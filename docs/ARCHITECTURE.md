@@ -206,3 +206,20 @@ VaultRAG/
         ├── ingestion_service.py
         └── embedding_service.py
 - |----------------
+
+
+
+### Embedding Layer
+
+* `app/embeddings/base.py`: Defines the embedding-provider interface.
+* `app/embeddings/huggingface_provider.py`: Implements hosted Hugging Face inference.
+* `app/services/embedding_service.py`: Coordinates document and query embedding generation and validates vectors.
+* `app/api/routers/embeddings.py`: Exposes query embedding generation through FastAPI.
+
+**Query embedding flow**
+
+Client → FastAPI embedding router → EmbeddingService → Hugging Face provider → Embedding vector → API response.
+
+The API uses the configured hosted embedding model. API credentials remain server-side and must not be included in responses.
+
+The vector storage and retrieval layer is not implemented yet.
