@@ -80,3 +80,13 @@ Added a provider-independent embedding service with batch processing,
 vector validation, and test coverage using a lightweight fake provider.
 
 No production embedding model or vector database has been connected yet.
+
+
+## Day 7 — Embedding API
+
+* Added a Hugging Face embedding provider using hosted inference.
+* Connected real embeddings to the existing embedding service.
+* Added `POST /embeddings/query` to FastAPI.
+* Added request validation and response schema.
+* Added API tests for successful responses and invalid inputs.
+* Kept automated tests independent of external API availability.
