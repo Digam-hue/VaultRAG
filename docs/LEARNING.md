@@ -465,3 +465,301 @@ If it raises:
 ```python
 ValueError("Something went wrong")
 ```
+### Day  7
+```
+if hasattr(result, "tolist"):
+            result = result.tolist()
+```
+checking for a NumPy array (or a similar library like pandas).
+The hasattr(result, "tolist") function checks if the result object has a method named .tolist().
+- next can be usefullfor serializabl like passing through json so first convert to list and then required format 
+
+
+```
+DEBUG    → detailed debugging information
+INFO     → normal information
+WARNING  → something potentially problematic
+ERROR    → an error occurred
+CRITICAL → serious error
+```
+
+# New Learnings — FastAPI & Python
+
+## 1. `os.getenv()`
+
+Reads an environment variable and optionally provides a default value.
+
+```python
+model = os.getenv(
+    "HF_EMBEDDING_MODEL",
+    "BAAI/bge-small-en-v1.5"
+)
+```
+
+* If `HF_EMBEDDING_MODEL` exists → use its value.
+* Otherwise → use `"BAAI/bge-small-en-v1.5"`.
+
+---
+
+## 2. `@staticmethod` vs `@classmethod`
+
+```python
+class Example:
+
+    @staticmethod
+    def add(a, b):
+        return a + b
+
+    @classmethod
+    def name(cls):
+        return cls.__name__
+```
+
+* `staticmethod` → receives **nothing automatically**.
+* `classmethod` → receives the **class as `cls`**.
+* Normal method → receives the **object as `self`**.
+
+```text
+self → object
+cls  → class
+static → nothing
+```
+
+---
+
+## 3. Pydantic `field_validator`
+
+```python
+class Request(BaseModel):
+    text: str
+
+    @field_validator("text")
+    @classmethod
+    def validate_text(cls, value):
+        if not value.strip():
+            raise ValueError("Text cannot be blank")
+        return value
+```
+
+`"text"` tells Pydantic **which field** to validate.
+
+`validate_text` is simply the **function name**. It can have any valid name.
+
+```text
+"field name" → text
+"validator function" → validate_text()
+```
+
+---
+
+## 4. Validator `mode`
+
+```python
+@field_validator("text", mode="before")
+```
+
+Runs before Pydantic's normal validation:
+
+```text
+Raw input → Your validator → Pydantic validation
+```
+
+```python
+@field_validator("text", mode="after")
+```
+
+Runs after Pydantic's normal validation.
+
+```text
+Raw input → Pydantic validation → Your validator
+```
+
+`mode="after"` is the default.
+
+---
+
+## 5. `Field()`
+
+```python
+text: str = Field(
+    min_length=1,
+    max_length=10_000
+)
+```
+
+Adds validation constraints/metadata to a Pydantic field.
+
+---
+
+## 6. `@lru_cache`
+
+```python
+@lru_cache(maxsize=1)
+def get_service():
+    return EmbeddingService()
+```
+
+Caches the function result so an expensive object doesn't need to be recreated every time.
+
+```text
+First call  → create object → cache
+Next calls  → return cached object
+```
+
+---
+
+## 7. FastAPI `APIRouter`
+
+```python
+router = APIRouter(
+    prefix="/embeddings",
+    tags=["Embeddings"]
+)
+
+@router.post("/query")
+def query():
+    ...
+```
+
+Final endpoint:
+
+```text
+POST /embeddings/query
+```
+
+* `prefix` → common path for routes.
+* `tags` → organizes Swagger/OpenAPI docs.
+* `@router.post()` → connects a POST request to a Python function.
+
+---
+
+## 8. FastAPI Response Model
+
+```python
+class Response(BaseModel):
+    model: str
+    dimensions: int
+    embedding: list[float]
+
+@router.post(
+    "/query",
+    response_model=Response
+)
+def query():
+    ...
+```
+
+`response_model` defines and validates the structure of the API response.
+
+---
+
+## 9. HTTP Status Codes
+
+Example server log:
+
+```text
+POST /embeddings/query HTTP/1.1" 200 OK
+```
+
+Important codes:
+
+```text
+200 → Success
+201 → Created
+400 → Bad Request
+401 → Unauthorized
+403 → Forbidden
+404 → Not Found
+422 → Validation Error
+500 → Server Error
+502 → Upstream/Provider Error
+503 → Service Unavailable
+```
+
+Example:
+
+```text
+GET /ws/ws → 404 Not Found
+```
+
+means the requested route `/ws/ws` doesn't exist.
+
+---
+
+## 10. Uvicorn Access Log
+
+```text
+INFO: 127.0.0.1:58706 - "POST /embeddings/query HTTP/1.1" 200 OK
+```
+
+Meaning:
+
+```text
+INFO              → log level
+127.0.0.1         → localhost / this computer
+58706             → client's temporary port
+POST              → HTTP method
+/embeddings/query → requested endpoint
+HTTP/1.1          → HTTP protocol version
+200 OK            → request succeeded
+```
+## FastAPI Dependency Injection & Testing
+
+### 1. `Depends()`
+
+`Depends()` tells FastAPI to provide a dependency automatically.
+
+```python
+def endpoint(
+    service: EmbeddingService = Depends(get_embedding_service)
+):
+    ...
+```
+
+Flow:
+
+```text
+Request → FastAPI → get_embedding_service() → service → endpoint
+```
+
+### 2. `dependency_overrides`
+
+Used in tests to replace a real dependency with a fake/test dependency.
+
+```python
+app.dependency_overrides[get_embedding_service] = fake_service
+```
+
+Useful for avoiding real APIs, models, databases, API keys, etc.
+
+### 3. `lambda`
+
+A short anonymous function.
+
+```python
+lambda: EmbeddingService(FakeEmbeddingProvider())
+```
+
+Equivalent to:
+
+```python
+def fake_service():
+    return EmbeddingService(FakeEmbeddingProvider())
+```
+
+### 4. Complete Test Pattern
+
+```python
+app.dependency_overrides[get_embedding_service] = (
+    lambda: EmbeddingService(FakeEmbeddingProvider())
+)
+
+response = client.post(
+    "/embeddings/query",
+    json={"text": "How does semantic search work?"},
+)
+```
+
+**Key idea:**
+`Depends()` → inject dependency in production.
+`dependency_overrides` → replace it during testing.
