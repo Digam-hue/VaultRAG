@@ -36,3 +36,19 @@ Basic RAG
 → Observability
 → Docker
 → Deployment
+
+
+
+### Current State — End of Day 7
+
+VaultRAG has a configurable ingestion pipeline, document metadata models, a provider-independent embedding service, and a Hugging Face hosted embedding provider.
+
+FastAPI exposes `POST /embeddings/query` for generating query vectors. The endpoint is manually testable through `/docs`.
+
+**Current embedding model:** `BAAI/bge-small-en-v1.5` (configurable through `HF_EMBEDDING_MODEL`).
+
+**Credentials:** Hugging Face token is stored in the local `.env` file. The Groq API key is reserved for the later answer-generation stage. Neither key should be committed to Git.
+
+**Testing:** Unit tests and API tests are maintained separately from manual real-provider integration checks. Record their verified status before declaring Day 7 complete.
+
+**Not implemented yet:** Persistent vector storage, semantic retrieval, retrieval-grounded answer generation, and permission-aware retrieval.
