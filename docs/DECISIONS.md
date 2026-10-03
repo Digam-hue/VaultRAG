@@ -50,3 +50,18 @@ Reasons:
 Trade-off:
 A provider implementation is still required before real semantic search
 can work.
+
+
+
+## Decision — Hosted Embedding Provider
+
+**Decision:** Use a provider interface with a Hugging Face hosted inference implementation for the initial embedding integration.
+
+**Reasoning:** Hosted inference avoids requiring model weights and heavy inference dependencies on the development laptop. The provider can be replaced without redesigning the embedding service.
+
+**Trade-offs:** Requires network access, valid credentials, model/provider availability, and compliance with inference quotas or pricing limits.
+
+**Security:** Credentials are supplied through environment configuration and must not be committed or returned by API endpoints.
+
+**Future consideration:** Evaluate a multilingual model if the knowledge base requires multilingual retrieval.
+git
