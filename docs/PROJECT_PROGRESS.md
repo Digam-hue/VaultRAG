@@ -165,3 +165,25 @@ Understand and implement te✔t chunking.
 Next: select and implement a real embedding provider, then connect
 document chunks to vector storage and retrieval.
 
+
+
+## Day 7 — Real Embeddings and FastAPI Integration
+
+**Implemented**
+
+* Added a Hugging Face hosted embedding provider.
+* Integrated the provider with the existing `EmbeddingService`.
+* Added query embedding endpoint: `POST /embeddings/query`.
+* Added request validation and embedding response schema.
+* Enabled manual endpoint testing through FastAPI Swagger UI at `/docs`.
+* Added automated API tests for success and invalid inputs.
+
+**Verification**
+
+* Real Hugging Face query and document embedding requests: verified manually.
+* Swagger endpoint: verified manually.
+* API and full pytest suites: mark complete only after both pass.
+
+**Outcome:** VaultRAG can generate real text embeddings through a hosted inference provider and expose query embedding generation through FastAPI.
+
+**Next:** Add persistent vector storage and semantic retrieval.
