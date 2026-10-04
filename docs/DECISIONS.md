@@ -65,3 +65,18 @@ can work.
 
 **Future consideration:** Evaluate a multilingual model if the knowledge base requires multilingual retrieval.
 git
+
+
+
+
+
+
+## Decision — Initial Vector Store
+
+**Decision:** Use ChromaDB with persistent local storage for the initial VaultRAG retrieval implementation.
+
+**Reasoning:** It provides a straightforward way to store embeddings, text, and metadata while learning and validating the RAG pipeline.
+
+**Trade-offs:** Local persistence is convenient for development but requires careful configuration for deployment, backups, concurrent access, and authorization filtering.
+
+**Future consideration:** Reassess ChromaDB versus Qdrant or PostgreSQL with pgvector when deployment and permission-aware retrieval requirements are implemented.
