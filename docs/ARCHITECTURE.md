@@ -223,3 +223,20 @@ Client → FastAPI embedding router → EmbeddingService → Hugging Face provid
 The API uses the configured hosted embedding model. API credentials remain server-side and must not be included in responses.
 
 The vector storage and retrieval layer is not implemented yet.
+
+
+### Indexing and Retrieval Flow
+
+**Indexing:** TXT file → IngestionService → Document chunks → EmbeddingService → Hugging Face provider → ChromaVectorStore.
+
+**Retrieval:** User question → EmbeddingService → query vector → ChromaVectorStore similarity search → relevant chunks with source metadata and distance.
+
+**Modules**
+- `app/services/indexing_service.py`: Coordinates document ingestion, embedding generation, and vector storage.
+- `app/services/retrieval_service.py`: Coordinates query embedding and similarity search.
+- `app/vectorstore/base.py`: Defines the vector-store contract.
+- `app/vectorstore/chroma_store.py`: Implements persistent vector storage using ChromaDB.
+- `app/api/routers/ingestion.py`: Exposes document indexing.
+- `app/api/routers/retrieval.py`: Exposes semantic search.
+
+The indexing and retrieval services must use the same ChromaDB persistence directory and collection. Retrieval returns document passages; answer generation is a separate future stage.
