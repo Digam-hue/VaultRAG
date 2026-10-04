@@ -90,3 +90,12 @@ No production embedding model or vector database has been connected yet.
 * Added request validation and response schema.
 * Added API tests for successful responses and invalid inputs.
 * Kept automated tests independent of external API availability.
+
+
+## Day 8 — Indexing and Semantic Retrieval
+* Added persistent ChromaDB vector storage.
+* Added indexing orchestration for ingestion, embeddings, and storage.
+* Added a retrieval service for semantic similarity search.
+* Added FastAPI endpoints for indexing documents and searching indexed chunks.
+* Added automated tests for storage, retrieval, and indexing.
+* Connected the components into an end-to-end document retrieval workflow.
