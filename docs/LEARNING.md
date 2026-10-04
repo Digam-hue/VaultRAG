@@ -763,3 +763,770 @@ response = client.post(
 **Key idea:**
 `Depends()` → inject dependency in production.
 `dependency_overrides` → replace it during testing.
+
+HNSW = Hierarchical Navigable Small World
+
+It is an indexing algorithm/data structure used for fast approximate nearest-neighbor (ANN) search.
+
+In your ChromaDB code:
+
+metadata={"hnsw:space": "cosine"}
+
+it means ChromaDB's HNSW vector index will use cosine distance/similarity to compare embedding vectors.
+
+
+### ChromaDB `upsert()`
+
+```python
+self.collection.upsert(
+    ids=ids,
+    documents=texts,
+    metadatas=metadatas,
+    embeddings=vectors,
+)
+```
+
+**Purpose:** Add or update chunks in the ChromaDB collection.
+
+* `ids` → unique ID for each chunk, e.g. `"doc_101:0"`
+* `documents` → actual chunk text
+* `metadatas` → extra information about the chunk, e.g. source, page, document ID
+* `embeddings` → vector representation of each chunk
+
+**`upsert` = `insert + update`**
+
+* ID doesn't exist → **insert** new record
+* ID already exists → **update/replace** that record
+
+Example:
+
+```text
+ID:         doc_101:0
+Document:   "Python is used in ML."
+Metadata:   {"source": "notes.pdf", "page": 2}
+Embedding:  [0.12, -0.45, 0.78, ...]
+```
+
+So remember:
+
+> **`upsert()` stores the chunk + its embedding + metadata in ChromaDB, creating it if new or updating it if the ID already exists.**
+
+
+
+
+# ChromaDB & Pytest — Quick Revision
+
+## ChromaDB
+
+### PersistentClient
+
+```python
+chromadb.PersistentClient(path="data/chroma")
+```
+
+* Creates/opens a **persistent local ChromaDB**.
+* Data is stored on **disk**, so it survives program restarts.
+* ChromaDB still uses **RAM while running**.
+
+### Collection
+
+```python
+client.get_or_create_collection(name="chunks")
+```
+
+* A collection stores **documents/chunks + embeddings + metadata + IDs**.
+* Similar to a table conceptually, but it is a vector database collection.
+
+### `get_or_create_collection()`
+
+* If collection exists → **open/reuse it**.
+* If it doesn't exist → **create it**.
+
+### HNSW
+
+**HNSW = Hierarchical Navigable Small World**
+
+* A graph-based index for **fast approximate nearest-neighbor vector search**.
+* Commonly used to find similar embeddings efficiently.
+
+```python
+metadata={"hnsw:space": "cosine"}
+```
+
+* Configures the vector distance/space as **cosine**.
+
+### `embedding_function=None`
+
+```python
+embedding_function=None
+```
+
+* Tells ChromaDB **not to generate embeddings itself**.
+* Your application provides the already-generated `embeddings`.
+
+---
+
+## ChromaDB Data Operations
+
+### `upsert()`
+
+```python
+collection.upsert(
+    ids=ids,
+    documents=texts,
+    metadatas=metadatas,
+    embeddings=vectors
+)
+```
+
+* **Upsert = Insert + Update**
+* New ID → insert.
+* Existing ID → update/replace.
+* The lists are matched by position:
+
+```text
+ids[0] ↔ documents[0] ↔ metadatas[0] ↔ embeddings[0]
+```
+
+### Chunk ID
+
+```python
+f"{document_id}:{chunk_id}"
+```
+
+Example:
+
+```text
+doc_101:0
+doc_101:1
+doc_101:2
+```
+
+* `document_id` → identifies the original document.
+* `chunk_id` → identifies a particular chunk inside that document.
+* Together they provide a useful unique chunk ID.
+
+---
+
+## Vector Similarity Search
+
+### `collection.query()`
+
+```python
+collection.query(
+    query_embeddings=[[...]],
+    n_results=top_k,
+    include=["documents", "metadatas", "distances"]
+)
+```
+
+* Searches ChromaDB for vectors most similar to the query embedding.
+* `n_results` → number of results requested.
+* `documents` → matched chunk text.
+* `metadatas` → information associated with chunks.
+* `distances` → how far each result is from the query according to the configured distance metric.
+
+### Why `[[...]]`?
+
+```python
+query_embeddings=[[0.1, 0.2, 0.3]]
+```
+
+* Outer list = **list of queries**.
+* Inner list = **one query's embedding vector**.
+
+### Chroma query result indexing
+
+```python
+result["documents"][0][i]
+```
+
+* `[0]` → results belonging to the **first query**.
+* `[i]` → the **i-th matching chunk**.
+
+---
+
+## Converting Chroma Results
+
+```python
+matches.append({
+    "page_content": text,
+    "metadata": result["metadatas"][0][i],
+    "distance": result["distances"][0][i],
+})
+```
+
+* Converts Chroma's nested result format into a simpler application format.
+* `page_content` → actual retrieved text.
+* `metadata` → source/document information.
+* `distance` → similarity distance.
+
+---
+
+## Metadata
+
+```python
+metadata = {
+    "document_id": "doc1",
+    "chunk_id": 0,
+    "source": "handbook.txt"
+}
+```
+
+* Metadata describes a chunk.
+* Chroma metadata supports supported **primitive/simple values** such as strings, integers, floats, and booleans.
+* Arbitrary nested Python objects such as dictionaries generally cannot be directly stored as metadata.
+
+---
+
+# Pytest
+
+### Test Discovery
+
+```python
+def test_add_and_search_documents():
+```
+
+* Pytest automatically discovers functions whose names start with **`test_`**.
+* You don't manually call these test functions.
+
+```text
+pytest
+  ↓
+find test_* functions
+  ↓
+call them
+  ↓
+check assertions
+```
+
+### Pytest Fixture
+
+```python
+def test_search(tmp_path):
+```
+
+* `tmp_path` is a **pytest fixture**.
+* Pytest creates a temporary directory and automatically passes it to the test.
+
+Conceptually:
+
+```python
+tmp_path = temporary_directory
+test_search(tmp_path)
+```
+
+### `tmp_path` in ChromaDB Tests
+
+```python
+ChromaVectorStore(
+    persist_directory=tmp_path / "vectors"
+)
+```
+
+* Gives each test an isolated temporary database location.
+* Prevents test data from polluting your real/local database.
+
+---
+
+## `pytest.raises()`
+
+```python
+with pytest.raises(ValueError, match="top_k"):
+    store.similarity_search(..., top_k=0)
+```
+
+* Tests that a specific exception **must occur**.
+* `ValueError` → expected exception type.
+* `match="top_k"` → expected text should appear in the error message.
+* If the error doesn't occur → test fails.
+* If a different error occurs → test fails.
+
+### `assert`
+
+```python
+assert len(results) == 1
+```
+
+* Checks an expected condition.
+* `True` → test passes that assertion.
+* `False` → test fails.
+
+---
+
+## Helper Function vs Test Function
+
+```python
+def make_document(...):
+```
+
+* Normal helper function.
+* **You call it manually.**
+
+```python
+def test_add_and_search_documents(...):
+```
+
+* Test function.
+* **Pytest calls it automatically.**
+
+```text
+make_document()       → YOU call
+store.add_documents() → YOU call
+similarity_search()   → YOU call
+
+test_*()              → PYTEST calls
+```
+
+
+# FastAPI & Testing — Key Learnings
+
+## 1. FastAPI Route Definition
+
+```python
+@router.post("/search", response_model=SearchResponse)
+```
+
+* `@` → Python decorator; registers the function as an API route.
+* `router.post()` → endpoint accepts **HTTP POST** requests.
+* `"/search"` → URL path.
+* `response_model=SearchResponse` → FastAPI validates/structures the returned response using the Pydantic model.
+
+**Mental model:** `POST + path → endpoint function → response schema`.
+
+---
+
+## 2. GET vs POST
+
+* **GET** → normally used to **retrieve/read** data; parameters commonly go in the URL.
+
+  ```http
+  GET /search?query=python
+  ```
+* **POST** → commonly used when **sending data to the server for processing**; data usually goes in the request body.
+
+  ```json
+  {"query": "python", "top_k": 5}
+  ```
+
+For complex search/RAG requests, `POST` is commonly more suitable because the request can contain structured data.
+
+---
+
+## 3. FastAPI Dependency Injection
+
+```python
+service: RetrievalService = Depends(get_retrieval_service)
+```
+
+Meaning:
+
+> "FastAPI, obtain a `RetrievalService` by calling `get_retrieval_service()` and inject it into `service`."
+
+Flow:
+
+```text
+Request
+  ↓
+FastAPI
+  ↓
+get_retrieval_service()
+  ↓
+RetrievalService object
+  ↓
+service.search(...)
+```
+
+`Depends()` lets the endpoint receive required objects without manually creating them inside the endpoint.
+
+---
+
+## 4. `TestClient`
+
+```python
+client = TestClient(app)
+```
+
+Creates a test HTTP client connected directly to the FastAPI application.
+
+```python
+response = client.post("/search", json=data)
+```
+
+You can test API endpoints **without starting Uvicorn separately**.
+
+```text
+pytest → TestClient → FastAPI app
+```
+
+---
+
+## 5. Dependency Overrides in Tests
+
+FastAPI dependencies can be replaced during testing:
+
+```python
+app.dependency_overrides[
+    get_retrieval_service
+] = fake_retrieval_service
+```
+
+Instead of:
+
+```text
+get_retrieval_service()
+      ↓
+Real service
+```
+
+the test gets:
+
+```text
+fake_retrieval_service()
+      ↓
+Fake service
+```
+
+Useful when the real dependency would involve databases, ChromaDB, external APIs, embeddings, etc.
+
+---
+
+## 6. `dependency_overrides.clear()`
+
+```python
+app.dependency_overrides.clear()
+```
+
+Removes all dependency replacements.
+
+Used to prevent one test's fake dependency from affecting another test.
+
+```python
+def setup_function():
+    app.dependency_overrides.clear()
+
+def teardown_function():
+    app.dependency_overrides.clear()
+```
+
+* `setup_function()` → pytest runs it **before each test**.
+* `teardown_function()` → pytest runs it **after each test**.
+
+This provides **test isolation**.
+
+---
+
+## 7. Filename Path-Safety Check
+
+```python
+if (
+    Path(request.filename).name != request.filename
+    or request.filename in {".", ".."}
+):
+    raise HTTPException(status_code=400)
+```
+
+Purpose: accept a **filename only**, not an arbitrary filesystem path.
+
+```text
+file.txt          → ✅
+data/file.txt     → ❌
+/home/user/a.txt  → ❌
+..               → ❌
+.                → ❌
+```
+
+`Path(...).name` extracts only the final filename.
+
+This prevents directory/path traversal such as:
+
+```text
+../../secret.txt
+```
+
+---
+
+# 8. Running FastAPI with Uvicorn
+
+```bash
+uvicorn app.main:app --reload
+```
+
+Breakdown:
+
+```text
+app.main
+   ↓
+Python module: app/main.py
+
+:
+   ↓
+
+app
+   ↓
+FastAPI application object
+```
+
+So:
+
+```text
+app.main:app
+```
+
+means:
+
+> Import `app.main` and get the `app` object from it.
+
+`--reload` watches for code changes and reloads the application during development.
+
+---
+
+# 9. Server vs Application
+
+These are different:
+
+```text
+Uvicorn
+  ↓
+ASGI Server
+  ↓
+Runs/listens for HTTP requests
+
+FastAPI
+  ↓
+Web application/framework
+  ↓
+Handles routing, validation, dependencies, etc.
+```
+
+**Uvicorn is the server; FastAPI is the application.**
+
+---
+
+# 10. ASGI
+
+ASGI is the interface between an ASGI server such as Uvicorn and an application such as FastAPI.
+
+```text
+Uvicorn
+   ↕
+ ASGI
+   ↕
+FastAPI
+```
+
+This allows the server and framework to communicate using a standard interface.
+
+---
+
+# 11. `127.0.0.1:8000`
+
+When Uvicorn starts:
+
+```text
+http://127.0.0.1:8000
+```
+
+* `127.0.0.1` → **this same computer** (loopback address).
+* `8000` → **port** where Uvicorn is listening.
+* `localhost` normally resolves to `127.0.0.1`.
+
+Think:
+
+```text
+127.0.0.1 → Which machine?
+8000       → Which service/port?
+```
+
+---
+
+# 12. Socket & Listening
+
+Uvicorn asks the operating system for a **network socket** and binds it to:
+
+```text
+127.0.0.1:8000
+```
+
+Then it listens for incoming connections.
+
+Conceptually:
+
+```text
+Uvicorn
+   ↓
+Socket
+   ↓
+127.0.0.1:8000
+   ↓
+WAIT for requests
+```
+
+If another process is already using the same port, you'll get:
+
+```text
+Address already in use
+```
+
+---
+
+# 13. Actual Request Flow
+
+When you open:
+
+```text
+http://127.0.0.1:8000/
+```
+
+the real flow is approximately:
+
+```text
+Browser
+   ↓
+HTTP request
+   ↓
+Operating System / Socket
+   ↓
+Uvicorn
+   ↓
+ASGI
+   ↓
+FastAPI
+   ↓
+Router
+   ↓
+Matching endpoint
+   ↓
+Your function
+   ↓
+Response
+   ↓
+Uvicorn
+   ↓
+Browser
+```
+
+For:
+
+```python
+@app.get("/")
+def home():
+    return {"message": "Hello"}
+```
+
+the browser sends:
+
+```http
+GET /
+```
+
+FastAPI matches:
+
+```text
+GET + /
+   ↓
+home()
+```
+
+and converts the returned Python data into an HTTP response, typically JSON.
+
+---
+
+# 14. `localhost` vs `0.0.0.0`
+
+```bash
+uvicorn app.main:app
+```
+
+normally listens on:
+
+```text
+127.0.0.1:8000
+```
+
+Only the local machine can normally access it.
+
+Using:
+
+```bash
+uvicorn app.main:app --host 0.0.0.0 --port 8000
+```
+
+means:
+
+> Listen on available network interfaces.
+
+Then another device on the same network may access the machine through its LAN IP, e.g.:
+
+```text
+http://192.168.1.20:8000
+```
+
+---
+
+# 15. `--reload` Mental Model
+
+Without reload:
+
+```text
+Start Uvicorn
+    ↓
+Import application
+    ↓
+Listen
+    ↓
+Keep running
+```
+
+With `--reload`:
+
+```text
+Start
+ ↓
+Watch files
+ ↓
+File changed?
+ ↓ yes
+Reload application
+```
+
+It is mainly a **development convenience**, not something normally used as the production server setup.
+
+---
+
+## One Big Mental Model
+
+```text
+uvicorn app.main:app
+        ↓
+Import app.main
+        ↓
+Get FastAPI `app`
+        ↓
+Uvicorn starts ASGI server
+        ↓
+OS creates/listens on socket
+        ↓
+127.0.0.1:8000
+        ↓
+Client sends HTTP request
+        ↓
+Uvicorn receives it
+        ↓
+ASGI → FastAPI
+        ↓
+Router finds endpoint
+        ↓
+Dependencies are injected
+        ↓
+Endpoint executes
+        ↓
+Response is created
+        ↓
+Uvicorn sends HTTP response
+        ↓
+Client receives it
+```
+
+**Core idea:**
+`Client → Uvicorn (server) → ASGI → FastAPI (application) → Router → Endpoint → Response → Client`
