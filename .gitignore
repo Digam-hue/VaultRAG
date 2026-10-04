@@ -18,4 +18,18 @@ __pycache__/
 .DS_Store
 
 # Logs
-*.log
+*.
+
+#data
+data
+
+# Local vector database — generated automatically
+
+data/chroma/
+
+# Local documents — keep real/private documents out of Git
+
+data/documents/*
+
+
+!data/documents/.gitkeep
