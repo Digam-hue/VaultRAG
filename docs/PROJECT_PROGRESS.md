@@ -187,3 +187,23 @@ document chunks to vector storage and retrieval.
 **Outcome:** VaultRAG can generate real text embeddings through a hosted inference provider and expose query embedding generation through FastAPI.
 
 **Next:** Add persistent vector storage and semantic retrieval.
+
+
+
+## Day 8 — Vector Storage, Retrieval, and Indexing Integration
+
+**Implemented**
+
+* Added a persistent ChromaDB vector-store adapter.
+* Added a retrieval service that connects query embeddings to vector search.
+* Exposed retrieval through `POST /retrieval/search`.
+* Added an indexing service connecting ingestion, embeddings, and vector storage.
+* Exposed document indexing through `POST /ingestion/index`.
+* Added automated tests for vector storage, retrieval, and indexing orchestration.
+* Verified the end-to-end workflow through FastAPI Swagger UI.
+
+**Verification:** Mark each test suite and the real indexing/search workflow complete only after confirming they pass.
+
+**Outcome:** VaultRAG can index text documents into persistent vector storage and retrieve relevant chunks for a question.
+
+**Next:** Improve indexing reliability, then build grounded answer generation with Groq.
