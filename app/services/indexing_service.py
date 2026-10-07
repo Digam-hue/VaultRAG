@@ -24,6 +24,11 @@ class IndexingService:
         if not documents:
             raise ValueError("The document produced no searchable chunks")
 
+        document_id = documents[0].metadata["document_id"]
+
+        # Replace any previously indexed version of this document.
+        self.vector_store.delete_document(document_id)
+        
         embeddings = self.embedding_service.embed_documents(documents)
 
         self.vector_store.add_documents(
@@ -33,6 +38,6 @@ class IndexingService:
 
         return {
             "source": documents[0].metadata["source"],
-            "document_id": documents[0].metadata["document_id"],
+            "document_id": document_id,
             "chunks_indexed": len(documents),
         }
