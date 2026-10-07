@@ -85,3 +85,11 @@ Document replacement:
 Re-indexing uses document_id to remove all previously indexed chunks before
 storing the new version. This prevents stale chunks from an older document
 version remaining in the vector store.
+
+LLM abstraction:
+The application depends on an LLMProvider interface rather than directly
+depending on Groq. This allows the LLM provider to be replaced later.
+
+Grounded generation:
+The generation service instructs the LLM to answer only from retrieved
+context and avoid unsupported claims.
