@@ -240,3 +240,8 @@ The vector storage and retrieval layer is not implemented yet.
 - `app/api/routers/retrieval.py`: Exposes semantic search.
 
 The indexing and retrieval services must use the same ChromaDB persistence directory and collection. Retrieval returns document passages; answer generation is a separate future stage.
+
+
+Document Re-indexing:
+File → Ingestion → document_id → Delete old chunks
+     → Embedding → ChromaDB → Current searchable version
