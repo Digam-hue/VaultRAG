@@ -99,3 +99,10 @@ No production embedding model or vector database has been connected yet.
 * Added FastAPI endpoints for indexing documents and searching indexed chunks.
 * Added automated tests for storage, retrieval, and indexing.
 * Connected the components into an end-to-end document retrieval workflow.
+
+
+Day 9:
+- Added reliable document re-indexing.
+- Added document-level deletion in ChromaDB.
+- Prevented stale chunks from previous document versions.
+- Added automated tests.
