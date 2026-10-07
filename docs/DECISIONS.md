@@ -80,3 +80,8 @@ git
 **Trade-offs:** Local persistence is convenient for development but requires careful configuration for deployment, backups, concurrent access, and authorization filtering.
 
 **Future consideration:** Reassess ChromaDB versus Qdrant or PostgreSQL with pgvector when deployment and permission-aware retrieval requirements are implemented.
+
+Document replacement:
+Re-indexing uses document_id to remove all previously indexed chunks before
+storing the new version. This prevents stale chunks from an older document
+version remaining in the vector store.
