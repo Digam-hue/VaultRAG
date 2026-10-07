@@ -106,3 +106,11 @@ Day 9:
 - Added document-level deletion in ChromaDB.
 - Prevented stale chunks from previous document versions.
 - Added automated tests.
+
+
+Day 10:
+- Added Groq-based grounded answer generation.
+- Added RAG orchestration service.
+- Added /rag/ask endpoint.
+- Added source evidence to RAG responses.
+- Added generation, orchestration, and API tests.
