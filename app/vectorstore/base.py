@@ -14,7 +14,10 @@ class VectorStore(Protocol):
         embeddings: Sequence[EmbeddingVector],
     ) -> None:
         ...
-
+        
+    def delete_document(self, document_id: str) -> None:
+        ...
+        
     def similarity_search(
         self,
         query_embedding: EmbeddingVector,
