@@ -76,3 +76,55 @@ def test_rejects_invalid_top_k(tmp_path):
 
     with pytest.raises(ValueError, match="top_k"):
         store.similarity_search([1.0, 0.0, 0.0], top_k=0)
+
+def test_delete_document_removes_only_that_documents_chunks(tmp_path):
+    store = ChromaVectorStore(
+        persist_directory=tmp_path / "chroma",
+        collection_name="delete_test",
+    )
+
+    documents = [
+        Document(
+            page_content="Old leave policy chunk 1",
+            metadata={
+                "document_id": "leave-1",
+                "chunk_id": "0",
+            },
+        ),
+        Document(
+            page_content="Old leave policy chunk 2",
+            metadata={
+                "document_id": "leave-1",
+                "chunk_id": "1",
+            },
+        ),
+        Document(
+            page_content="Employee handbook",
+            metadata={
+                "document_id": "handbook-1",
+                "chunk_id": "0",
+            },
+        ),
+    ]
+
+    embeddings = [
+        [1.0, 0.0, 0.0],
+        [0.9, 0.1, 0.0],
+        [0.0, 1.0, 0.0],
+    ]
+
+    store.add_documents(documents, embeddings)
+
+    assert store.collection.count() == 3
+
+    store.delete_document("leave-1")
+
+    assert store.collection.count() == 1
+
+    results = store.similarity_search(
+        query_embedding=[0.0, 1.0, 0.0],
+        top_k=5,
+    )
+
+    assert len(results) == 1
+    assert results[0]["metadata"]["document_id"] == "handbook-1"
