@@ -215,3 +215,12 @@ Day 9 — Reliable Re-indexing
 - Updated IndexingService to replace old document chunks before indexing.
 - Added unit tests for deletion and replacement.
 - Verified that re-indexing removes stale chunks.
+
+Day 10 — Grounded Answer Generation
+- Added provider-independent LLM interface.
+- Added Groq LLM provider.
+- Added GenerationService for grounded answers.
+- Added RAGService to coordinate retrieval and generation.
+- Added POST /rag/ask.
+- API returns answer with retrieved source evidence.
+- Added unit and API tests.
