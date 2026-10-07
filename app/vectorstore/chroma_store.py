@@ -88,7 +88,16 @@ class ChromaVectorStore:
             metadatas=metadatas,
             embeddings=vectors,
         )
+    def delete_document(self, document_id: str) -> None:
+        """Delete all indexed chunks belonging to one document."""
 
+        if not document_id:
+            raise ValueError("document_id cannot be empty")
+
+        self.collection.delete(
+            where={"document_id": document_id}
+        )
+        
     def similarity_search(
         self,
         query_embedding: EmbeddingVector,
