@@ -207,3 +207,11 @@ document chunks to vector storage and retrieval.
 **Outcome:** VaultRAG can index text documents into persistent vector storage and retrieve relevant chunks for a question.
 
 **Next:** Improve indexing reliability, then build grounded answer generation with Groq.
+
+
+Day 9 — Reliable Re-indexing
+- Added document-level deletion to VectorStore.
+- Added ChromaDB deletion by document_id.
+- Updated IndexingService to replace old document chunks before indexing.
+- Added unit tests for deletion and replacement.
+- Verified that re-indexing removes stale chunks.
