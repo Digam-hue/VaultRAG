@@ -245,3 +245,8 @@ The indexing and retrieval services must use the same ChromaDB persistence direc
 Document Re-indexing:
 File → Ingestion → document_id → Delete old chunks
      → Embedding → ChromaDB → Current searchable version
+
+
+     RAG Answer Flow:
+Question → RetrievalService → VectorStore → Retrieved Chunks
+         → GenerationService → LLM Provider → Answer + Sources
