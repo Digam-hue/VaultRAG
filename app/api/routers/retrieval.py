@@ -6,9 +6,12 @@ from pathlib import Path
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field, field_validator
 
-from app.embeddings.huggingface_provider import (
-    HuggingFaceEmbeddingProvider,
-)
+# from app.embeddings.huggingface_provider import (
+#     HuggingFaceEmbeddingProvider,
+# )
+
+from app.embeddings.voyage_provider import VoyageEmbeddingProvider
+
 from app.services.embedding_service import EmbeddingService
 from app.services.retrieval_service import RetrievalService
 from app.vectorstore.chroma_store import ChromaVectorStore
@@ -43,7 +46,7 @@ class SearchResponse(BaseModel):
 
 @lru_cache(maxsize=1)
 def get_retrieval_service() -> RetrievalService:
-    provider = HuggingFaceEmbeddingProvider()
+    provider = VoyageEmbeddingProvider()
     embedding_service = EmbeddingService(provider)
 
     persist_directory = Path(

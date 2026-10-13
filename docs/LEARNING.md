@@ -1530,3 +1530,48 @@ Client receives it
 
 **Core idea:**
 `Client → Uvicorn (server) → ASGI → FastAPI (application) → Router → Endpoint → Response → Client`
+
+
+## HTTP Response Handling (HTTPX) of voyage_provider.py
+ 
+
+```python
+        response = httpx.post(
+            self.API_URL,
+            headers={
+                "Authorization": f"Bearer {self.api_key}",
+                "Content-Type": "application/json",
+            },
+            json={
+                "input": texts,
+                "model": self.model,
+                "input_type": input_type,
+                "output_dtype": "float",
+            },
+            timeout=60.0,
+        )
+
+        # Preserve provider failures as upstream errors.
+        response.raise_for_status()
+        payload: Any = response.json()
+
+```
+
+
+
+- **`response`**: The HTTPX `Response` object returned by `httpx.post()`. Contains the HTTP status code, headers, and response body.
+- **`response.raise_for_status()`**: Raises an `httpx.HTTPStatusError` for unsuccessful HTTP status codes (4xx/5xx), preventing error responses from being processed as successful results.
+- **`response.json()`**: Parses the JSON response body into Python objects (usually a `dict` or `list`). Raises an exception if the body is invalid JSON.
+- **`payload: Any`**: Stores the parsed response. `Any` is a type annotation allowing different Python types because the API response has not yet been validated.
+- **`isinstance(payload, dict)`**: Checks whether the parsed response is a dictionary before accessing dictionary methods.
+- **`payload.get("data")`**: Retrieves the `"data"` field from the response dictionary; returns `None` if the key is missing, instead of raising `KeyError`.
+- **Conditional expression (`A if condition else B`)**: Selects a value based on a condition. Here, `data = payload.get("data") if isinstance(payload, dict) else None` avoids calling `.get()` on a non-dictionary.
+- **`data`**: Contains the embedding records returned by the API, typically dictionaries with fields such as `"index"` and `"embedding"`.
+- **`isinstance(data, list)`**: Checks whether `"data"` contains a list of embedding records.
+- **`len(data) != len(texts)`**: Verifies that the number of returned embedding records matches the number of input texts.
+- **`or`**: Combines conditions; the validation fails if `data` is not a list *or* the record count is incorrect.
+- **`raise RuntimeError(...)`**: Stops execution when the response structure or embedding count is invalid.
+- **`sorted(data, key=lambda item: item.get("index", -1))`**: Orders embedding records by their API-provided input index, ensuring each embedding corresponds to the correct input text.
+- **`item.get("index", -1)`**: Reads a record's index; `-1` is the fallback if missing. For stricter validation, reject missing or duplicate indices rather than silently sorting them.
+
+**Important:** Validate each record's index and embedding vector before returning the embeddings. Matching the record count alone does not guarantee a valid response.

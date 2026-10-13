@@ -6,9 +6,12 @@ from dotenv import load_dotenv
 from fastapi import APIRouter,Depends, HTTPException
 from pydantic import BaseModel, Field, field_validator
 
-from app.embeddings.huggingface_provider import (
-    HuggingFaceEmbeddingProvider,
-)
+# from app.embeddings.huggingface_provider import (
+#     HuggingFaceEmbeddingProvider,
+# )
+
+from app.embeddings.voyage_provider import VoyageEmbeddingProvider
+
 from app.services.embedding_service import EmbeddingService
 
 load_dotenv()
@@ -36,7 +39,7 @@ class QueryEmbeddingResponse(BaseModel):
 
 @lru_cache(maxsize=1)
 def get_embedding_service() -> EmbeddingService:
-    provider = HuggingFaceEmbeddingProvider()
+    provider = VoyageEmbeddingProvider()
     return EmbeddingService(provider)
 
 

@@ -5,7 +5,8 @@ from pathlib import Path
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
 
-from app.embeddings.huggingface_provider import HuggingFaceEmbeddingProvider
+# from app.embeddings.huggingface_provider import HuggingFaceEmbeddingProvider
+from app.embeddings.voyage_provider import VoyageEmbeddingProvider
 from app.llm.groq_provider import GroqLLMProvider
 from app.services.embedding_service import EmbeddingService
 from app.services.generation_service import GenerationService
@@ -38,7 +39,7 @@ def get_rag_service() -> RAGService:
     ).resolve()
 
     embedding_service = EmbeddingService(
-        HuggingFaceEmbeddingProvider()
+        VoyageEmbeddingProvider()
     )
 
     vector_store = ChromaVectorStore(

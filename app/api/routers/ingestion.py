@@ -7,9 +7,12 @@ from pathlib import Path
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
 
-from app.embeddings.huggingface_provider import (
-    HuggingFaceEmbeddingProvider,
-)
+# from app.embeddings.huggingface_provider import (
+#     HuggingFaceEmbeddingProvider,
+# )
+
+from app.embeddings.voyage_provider import VoyageEmbeddingProvider
+
 from app.services.embedding_service import EmbeddingService
 from app.services.indexing_service import IndexingService
 from app.services.ingestion_service import IngestionService
@@ -44,7 +47,7 @@ def get_indexing_service() -> IndexingService:
     )
 
     embedding_service = EmbeddingService(
-        HuggingFaceEmbeddingProvider(),
+        VoyageEmbeddingProvider(),
     )
 
     vector_store = ChromaVectorStore(
@@ -54,7 +57,7 @@ def get_indexing_service() -> IndexingService:
     return IndexingService(
         ingestion_service=ingestion_service,
         embedding_service=embedding_service,
-        vector_store=vector_store,
+        vector_store=vector_store,  
     )
 
 

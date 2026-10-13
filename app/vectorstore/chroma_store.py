@@ -14,7 +14,7 @@ class ChromaVectorStore:
     def __init__(
         self,
         persist_directory: Path,
-        collection_name: str = "vaultrag_chunks",
+        collection_name: str = "vaultrag_voyage_v1"#"vaultrag_chunks",
     ) -> None:
         persist_directory.mkdir(parents=True, exist_ok=True)
 
