@@ -32,4 +32,7 @@ data/chroma/
 data/documents/*
 
 
-!data/documents/.gitkeep
+!data/documents/.gitkeep.coverage
+
+
+.coverage
