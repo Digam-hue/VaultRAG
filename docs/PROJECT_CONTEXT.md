@@ -68,3 +68,39 @@ VaultRAG now includes document ingestion and chunking, metadata-bearing document
 **Current limitation:** Retrieval returns text passages and similarity distances; it does not yet generate a final answer using Groq. Permission-aware retrieval and production-grade document update/deletion handling remain future work.
 
 Record the actual test and manual verification results before declaring Day 8 complete.
+
+
+
+
+
+
+
+
+
+## Current State — End of Day 11
+
+VaultRAG has a working modular RAG foundation with document ingestion,
+chunking, embeddings, persistent ChromaDB storage, semantic retrieval,
+Groq-based answer generation, and the `POST /rag/ask` endpoint.
+
+Day 11 focuses on reliability testing:
+- RAG service integration-style tests.
+- Empty retrieval behavior.
+- API request validation.
+- Expected and unexpected error handling.
+- Provider contract tests using mocks.
+
+Latest confirmed full-suite result: 54 passed.
+Latest reported application coverage: 78%.
+
+Before starting the next implementation phase, run the complete test
+suite and record the final results after provider contract tests.
+
+### Resume Instructions
+
+1. Activate `.venv`.
+2. Run `python -m pytest -q`.
+3. Run `python -m pytest --cov=app --cov-report=term-missing`.
+4. Check `git status` and commit the completed Day 11 changes.
+5. Continue with the next planned RAG milestone; do not add RBAC,
+   LangGraph, or multi-agent complexity prematurely.

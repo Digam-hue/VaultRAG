@@ -1575,3 +1575,28 @@ Client receives it
 - **`item.get("index", -1)`**: Reads a record's index; `-1` is the fallback if missing. For stricter validation, reject missing or duplicate indices rather than silently sorting them.
 
 **Important:** Validate each record's index and embedding vector before returning the embeddings. Matching the record count alone does not guarantee a valid response.
+
+
+
+
+
+## Day 11 — Integration Testing and Provider Mocks
+
+### Integration-style tests
+
+Unit tests verify one component in isolation. Integration-style tests
+verify that multiple components pass data correctly between them.
+
+In VaultRAG, the RAG service passes the user's question to retrieval,
+then passes the retrieved documents to generation.
+
+### Mocking external providers
+
+A fake or mock provider replaces the external API boundary during tests.
+
+This allows testing prompt construction, response validation, error
+handling, and embedding ordering without real API calls.
+
+Mocked tests do not prove that a live provider is available. They verify
+how our application handles the responses and errors represented by
+the tests.

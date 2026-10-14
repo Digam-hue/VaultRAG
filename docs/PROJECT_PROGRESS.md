@@ -224,3 +224,32 @@ Day 10 — Grounded Answer Generation
 - Added POST /rag/ask.
 - API returns answer with retrieved source evidence.
 - Added unit and API tests.
+
+
+
+## Day 11 — RAG Reliability and Testing
+
+### Completed
+
+- [x] Reviewed baseline test coverage.
+- [x] Added RAG service integration-style tests.
+- [x] Tested propagation of retrieved context into answer generation.
+- [x] Tested behavior when retrieval returns no documents.
+- [x] Tested RAG API request validation and error handling.
+- [x] Verified the full existing test suite: 54 passed.
+
+### Provider Contract Tests
+
+- [ ] Add mocked Groq provider tests.
+- [ ] Add mocked Voyage embedding provider tests.
+- [ ] Run the focused provider test suite.
+- [ ] Run the complete test suite and coverage report.
+
+### Verification
+
+Record the final test count and coverage after the provider tests pass.
+
+### Next
+
+Day 12 — Begin the next planned RAG improvement only after
+the Day 11 test suite and documentation are complete.

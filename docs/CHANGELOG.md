@@ -114,3 +114,22 @@ Day 10:
 - Added /rag/ask endpoint.
 - Added source evidence to RAG responses.
 - Added generation, orchestration, and API tests.
+
+
+
+## Day 11 — RAG Reliability and Test Coverage
+
+### Added
+
+- Expanded RAG service tests for retrieved context propagation.
+- Added coverage for empty retrieval results.
+- Added API tests for invalid top_k values.
+- Added API error-mapping and error-message sanitization tests.
+- Planned mocked contract tests for Groq and Voyage providers.
+
+### Verification
+
+- 54 tests passed in the latest full-suite run.
+- Latest reported coverage: 78%.
+- Provider contract tests must be verified separately before
+  marking that part complete.
