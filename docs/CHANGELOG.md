@@ -133,3 +133,19 @@ Day 10:
 - Latest reported coverage: 78%.
 - Provider contract tests must be verified separately before
   marking that part complete.
+
+
+## Day 12 — Permission-Aware Retrieval
+
+- Added access-level metadata to indexed document chunks.
+- Added optional allowed-access-level filtering to vector-store
+  similarity search.
+- Passed access-level settings through the indexing and retrieval
+  services.
+- Connected permission-aware retrieval to the RAG service.
+- Added tests for access-level propagation and retrieval filtering.
+- Verified targeted tests and the complete test suite.
+
+Limitations:
+- FastAPI routers do not expose access-level controls yet.
+- Authentication and role-based authorization remain future work.
