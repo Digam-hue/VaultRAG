@@ -1,3 +1,4 @@
+from collections.abc import Sequence
 from app.services.embedding_service import EmbeddingService
 from app.vectorstore.base import VectorStore
 
@@ -17,6 +18,7 @@ class RetrievalService:
         self,
         question: str,
         top_k: int = 5,
+        allowed_access_levels: Sequence[str] | None = None,
     ) -> list[dict]:
         if not question.strip():
             raise ValueError("Question cannot be empty")
@@ -29,4 +31,5 @@ class RetrievalService:
         return self.vector_store.similarity_search(
             query_embedding=query_embedding,
             top_k=top_k,
+            allowed_access_levels=allowed_access_levels,
         )
