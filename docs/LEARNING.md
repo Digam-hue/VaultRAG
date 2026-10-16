@@ -1600,3 +1600,105 @@ handling, and embedding ordering without real API calls.
 Mocked tests do not prove that a live provider is available. They verify
 how our application handles the responses and errors represented by
 the tests.
+
+
+
+## RAG: Access-Level Filtering & Tests
+
+### 1. ChromaDB `where` filter
+
+Filter documents using metadata.
+
+```python
+where = {
+    "access_level": {
+        "$in": ["public", "employee"]
+    }
+}
+```
+
+- `access_level`: metadata field in a document.
+- `$in`: matches any value in the given list.
+- Inner `{}`: contains the filter operator and its values.
+- Outer `{}`: defines the metadata filter.
+
+**Example:** Documents with `"public"` or `"employee"` are eligible; `"admin"` is excluded.
+
+Exact match:
+
+```python
+where = {"access_level": "employee"}
+```
+
+### 2. Build the filter conditionally
+
+```python
+where = None
+
+if allowed_access_levels is not None:
+    if not allowed_access_levels:
+        return []
+
+    where = {
+        "access_level": {
+            "$in": list(allowed_access_levels)
+        }
+    }
+```
+
+- `None` → no access-level filter.
+- `[]` → return no results.
+- `["public", "hr"]` → allow either level.
+- `list(...)` → converts an iterable into a list.
+
+### 3. Similarity search with metadata filtering
+
+```python
+result = self.collection.query(
+    query_embeddings=[
+        [float(value) for value in query_embedding]
+    ],
+    n_results=min(top_k, self.collection.count()),
+    where=where,
+    include=["documents", "metadatas", "distances"],
+)
+```
+
+- `query_embeddings`: vector of the user's question.
+- `n_results`: maximum number of results requested.
+- `where`: filters eligible documents.
+- `include`: returns text, metadata and distances.
+- Lower distance generally means a closer match.
+
+**Example:** The access filter excludes admin documents before they can be returned as matches, even if their vectors are highly similar.
+
+### 4. Fake services in tests
+
+When production code passes a new argument, update fake methods to accept it.
+
+```python
+class EmptyRetrievalService:
+    def search(
+        self,
+        question: str,
+        top_k: int = 5,
+        allowed_access_levels=None,
+    ):
+        return []
+```
+
+Otherwise, Python raises:
+
+```text
+TypeError: unexpected keyword argument
+'allowed_access_levels'
+```
+
+The fake accepts the argument but can ignore it if the test doesn't need it.
+
+Run tests:
+
+```bash
+pytest -v tests/test_rag_service.py
+pytest
+```
