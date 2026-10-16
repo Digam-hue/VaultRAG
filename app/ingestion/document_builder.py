@@ -14,8 +14,14 @@ def create_documents(
     source: str,
     document_id: str,
     content_hash: str,
+    access_level: str = "public",#new
 ) -> list[Document]:
+    
     source_name = Path(source).name
+    
+    if not access_level.strip():#new
+        raise ValueError("access_level cannot be empty")
+    
     non_empty_chunks = [
         chunk for chunk in chunks if chunk.strip()
     ]
@@ -29,6 +35,7 @@ def create_documents(
                 "content_hash": content_hash,
                 "chunk_id": index,
                 "chunk_count": len(non_empty_chunks),
+                "access_level":access_level,
             },
         )
         for index, chunk in enumerate(non_empty_chunks)
