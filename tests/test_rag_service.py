@@ -4,10 +4,15 @@ import pytest
 class FakeRetrievalService:
     def __init__(self):
         self.questions = []
+        self.received_access_levels = None
 
-    def search(self, question: str, top_k: int = 5):
+
+    def search(self, question: str, 
+               top_k: int = 5,
+               allowed_access_levels=None,):
+        
         self.questions.append((question, top_k))
-
+        self.received_access_levels = allowed_access_levels
         return [
             {
                 "page_content": "Employees receive 30 days of annual leave.",
@@ -103,7 +108,7 @@ def test_rag_service_passes_retrieved_context_to_generation():
 
 def test_rag_service_handles_no_retrieved_documents():
     class EmptyRetrievalService:
-        def search(self, question: str, top_k: int = 5):
+        def search(self, question: str, top_k: int = 5,allowed_access_levels=None,):
             return []
 
     llm_provider = FakeLLMProvider()
@@ -117,6 +122,7 @@ def test_rag_service_handles_no_retrieved_documents():
     result = service.ask(
         question="What is the company's travel policy?",
         top_k=3,
+        
     )
 
     assert result["question"] == (
@@ -132,3 +138,24 @@ def test_rag_service_handles_no_retrieved_documents():
 
 
 
+
+def test_rag_passes_access_levels_to_retrieval():
+    retrieval_service = FakeRetrievalService()
+
+    llm_provider = FakeLLMProvider()
+    generation_service = GenerationService(llm_provider)
+
+    service = RAGService(
+        retrieval_service=retrieval_service,
+        generation_service=generation_service,
+    )
+
+    service.ask(
+        question="How many annual leave days are provided?",
+        allowed_access_levels=["public", "hr"],
+    )
+
+    assert retrieval_service.received_access_levels == [
+        "public",
+        "hr",
+    ]
