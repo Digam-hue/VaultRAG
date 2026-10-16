@@ -1,3 +1,4 @@
+from collections.abc import Sequence
 from app.services.generation_service import GenerationService
 from app.services.retrieval_service import RetrievalService
 
@@ -17,6 +18,8 @@ class RAGService:
         self,
         question: str,
         top_k: int = 5,
+        allowed_access_levels: Sequence[str] | None = None,
+
     ) -> dict:
         if not question.strip():
             raise ValueError("Question cannot be empty")
@@ -24,6 +27,8 @@ class RAGService:
         documents = self.retrieval_service.search(
             question=question,
             top_k=top_k,
+            allowed_access_levels=allowed_access_levels,
+
         )
 
         answer = self.generation_service.generate_answer(
