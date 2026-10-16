@@ -18,8 +18,16 @@ class IndexingService:
         self.embedding_service = embedding_service
         self.vector_store = vector_store
 
-    def index_file(self, file_path: Path) -> dict:
-        documents = self.ingestion_service.ingest_file(file_path)
+    def index_file(
+        self, 
+        file_path: Path,
+        access_level: str = "public",
+    ) -> dict:
+        
+        documents = self.ingestion_service.ingest_file(
+            file_path,
+            access_level=access_level,
+        )
 
         if not documents:
             raise ValueError("The document produced no searchable chunks")
