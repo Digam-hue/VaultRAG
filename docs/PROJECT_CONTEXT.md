@@ -104,3 +104,25 @@ suite and record the final results after provider contract tests.
 4. Check `git status` and commit the completed Day 11 changes.
 5. Continue with the next planned RAG milestone; do not add RBAC,
    LangGraph, or multi-agent complexity prematurely.
+
+## Current Status — Day 12 Complete
+
+VaultRAG now supports internal permission-aware retrieval.
+
+Implemented:
+- Access-level metadata during document creation.
+- Access-level propagation through ingestion and indexing.
+- Optional access-level filtering during vector-store retrieval.
+- Access-level propagation through the RAG service.
+- Automated tests for permission-aware retrieval and propagation.
+
+Not implemented yet:
+- Access-level input in FastAPI indexing routes.
+- Permission-related request models and API responses.
+- Authentication and role-based authorization.
+- Deriving retrieval permissions from the authenticated user.
+
+Next:
+Expose document access levels through the API, verify the workflow
+using FastAPI /docs, and then build trusted authentication and
+authorization into the system.
