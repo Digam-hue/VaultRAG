@@ -250,3 +250,33 @@ File → Ingestion → document_id → Delete old chunks
      RAG Answer Flow:
 Question → RetrievalService → VectorStore → Retrieved Chunks
          → GenerationService → LLM Provider → Answer + Sources
+
+
+## Permission-Aware Retrieval
+
+Documents now contain an `access_level` metadata field.
+The default access level is `public`.
+
+The indexing pipeline passes the access level through
+the ingestion service and document builder. The resulting
+metadata is stored with each chunk in the vector store.
+
+During retrieval, the caller can provide
+`allowed_access_levels`. The vector store filters results
+using the stored `access_level` metadata.
+
+Current flow:
+
+Question
+  -> RAGService
+  -> RetrievalService
+  -> EmbeddingService
+  -> VectorStore permission filter
+  -> Retrieved chunks
+  -> GenerationService
+  -> Answer and sources
+
+Current limitation:
+The permission filter is available internally but is not yet
+exposed through the FastAPI request models and routers.
+Authentication and role-based authorization are not implemented.
