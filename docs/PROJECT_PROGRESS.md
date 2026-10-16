@@ -24,19 +24,19 @@ Build the first FastAPI application and health endpoint.
 
 ## Not Started Yet
 
-- [ ] Document loading
-- [ ] Chunking
-- [ ] Embeddings
-- [ ] Vector database
-- [ ] Retrieval
-- [ ] LLM integration
-- [ ] RAG pipeline
-- [ ] Authentication
-- [ ] RBAC
-- [ ] LangGraph
-- [ ] Advanced RAG
-- [ ] Evaluation
-- [ ] Deployment
+- [✔]Document loading
+- [✔]Chunking
+- [✔]Embeddings
+- [✔]Vector database
+- [✔]Retrieval
+- [✔]LLM integration
+- [✔]RAG pipeline
+- [✔]Authentication
+- [✔]RBAC
+- [✔]LangGraph
+- [✔]Advanced RAG
+- [✔]Evaluation
+- [✔]Deployment
 
 ## Current Architecture
 
@@ -162,7 +162,7 @@ Understand and implement te✔t chunking.
 - [✔] Full test suite passes.
 - [✔] Changes committed and pushed.
 
-Next: select and implement a real embedding provider, then connect
+Ne✔t: select and implement a real embedding provider, then connect
 document chunks to vector storage and retrieval.
 
 
@@ -172,7 +172,7 @@ document chunks to vector storage and retrieval.
 **Implemented**
 
 * Added a Hugging Face hosted embedding provider.
-* Integrated the provider with the existing `EmbeddingService`.
+* Integrated the provider with the e✔isting `EmbeddingService`.
 * Added query embedding endpoint: `POST /embeddings/query`.
 * Added request validation and embedding response schema.
 * Enabled manual endpoint testing through FastAPI Swagger UI at `/docs`.
@@ -184,37 +184,37 @@ document chunks to vector storage and retrieval.
 * Swagger endpoint: verified manually.
 * API and full pytest suites: mark complete only after both pass.
 
-**Outcome:** VaultRAG can generate real text embeddings through a hosted inference provider and expose query embedding generation through FastAPI.
+**Outcome:** VaultRAG can generate real te✔t embeddings through a hosted inference provider and e✔pose query embedding generation through FastAPI.
 
-**Next:** Add persistent vector storage and semantic retrieval.
+**Ne✔t:** Add persistent vector storage and semantic retrieval.
 
 
 
-## Day 8 — Vector Storage, Retrieval, and Indexing Integration
+## Day 8 — Vector Storage, Retrieval, and Inde✔ing Integration
 
 **Implemented**
 
 * Added a persistent ChromaDB vector-store adapter.
 * Added a retrieval service that connects query embeddings to vector search.
-* Exposed retrieval through `POST /retrieval/search`.
-* Added an indexing service connecting ingestion, embeddings, and vector storage.
-* Exposed document indexing through `POST /ingestion/index`.
-* Added automated tests for vector storage, retrieval, and indexing orchestration.
+* E✔posed retrieval through `POST /retrieval/search`.
+* Added an inde✔ing service connecting ingestion, embeddings, and vector storage.
+* E✔posed document inde✔ing through `POST /ingestion/inde✔`.
+* Added automated tests for vector storage, retrieval, and inde✔ing orchestration.
 * Verified the end-to-end workflow through FastAPI Swagger UI.
 
-**Verification:** Mark each test suite and the real indexing/search workflow complete only after confirming they pass.
+**Verification:** Mark each test suite and the real inde✔ing/search workflow complete only after confirming they pass.
 
-**Outcome:** VaultRAG can index text documents into persistent vector storage and retrieve relevant chunks for a question.
+**Outcome:** VaultRAG can inde✔ te✔t documents into persistent vector storage and retrieve relevant chunks for a question.
 
-**Next:** Improve indexing reliability, then build grounded answer generation with Groq.
+**Ne✔t:** Improve inde✔ing reliability, then build grounded answer generation with Groq.
 
 
-Day 9 — Reliable Re-indexing
+Day 9 — Reliable Re-inde✔ing
 - Added document-level deletion to VectorStore.
 - Added ChromaDB deletion by document_id.
-- Updated IndexingService to replace old document chunks before indexing.
+- Updated Inde✔ingService to replace old document chunks before inde✔ing.
 - Added unit tests for deletion and replacement.
-- Verified that re-indexing removes stale chunks.
+- Verified that re-inde✔ing removes stale chunks.
 
 Day 10 — Grounded Answer Generation
 - Added provider-independent LLM interface.
@@ -231,25 +231,47 @@ Day 10 — Grounded Answer Generation
 
 ### Completed
 
-- [x] Reviewed baseline test coverage.
-- [x] Added RAG service integration-style tests.
-- [x] Tested propagation of retrieved context into answer generation.
-- [x] Tested behavior when retrieval returns no documents.
-- [x] Tested RAG API request validation and error handling.
-- [x] Verified the full existing test suite: 54 passed.
+- [✔] Reviewed baseline test coverage.
+- [✔] Added RAG service integration-style tests.
+- [✔] Tested propagation of retrieved conte✔t into answer generation.
+- [✔] Tested behavior when retrieval returns no documents.
+- [✔] Tested RAG API request validation and error handling.
+- [✔] Verified the full e✔isting test suite: 54 passed.
 
 ### Provider Contract Tests
 
-- [ ] Add mocked Groq provider tests.
-- [ ] Add mocked Voyage embedding provider tests.
-- [ ] Run the focused provider test suite.
-- [ ] Run the complete test suite and coverage report.
+- [✔]Add mocked Groq provider tests.
+- [✔]Add mocked Voyage embedding provider tests.
+- [✔]Run the focused provider test suite.
+- [✔]Run the complete test suite and coverage report.
 
 ### Verification
 
 Record the final test count and coverage after the provider tests pass.
 
-### Next
+### Ne✔t
 
-Day 12 — Begin the next planned RAG improvement only after
+Day 12 — Begin the ne✔t planned RAG improvement only after
 the Day 11 test suite and documentation are complete.
+
+
+
+
+## Day 12 — Permission-Aware Retrieval
+
+Status: Complete
+
+- [✔] Add access-level metadata to documents.
+- [✔] Propagate access level through ingestion and indexing.
+- [✔] Add optional allowed-access-level filtering to retrieval.
+- [✔] Connect permission-aware retrieval to the RAG service.
+- [✔] Add and run automated tests.
+- [✔] Run the full test suite.
+
+Not included in this day:
+- FastAPI router changes for access levels.
+- Authentication and RBAC.
+
+Next task:
+Expose access-level configuration through the FastAPI API
+and document the manual testing workflow in /docs.
