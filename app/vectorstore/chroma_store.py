@@ -102,6 +102,8 @@ class ChromaVectorStore:
         self,
         query_embedding: EmbeddingVector,
         top_k: int = 5,
+        allowed_access_levels: Sequence[str] | None = None,
+        
     ) -> list[dict]:
         if not query_embedding:
             raise ValueError("Query embedding cannot be empty")
@@ -111,10 +113,22 @@ class ChromaVectorStore:
 
         if self.collection.count() == 0:
             return []
+        
+        where = None
+        if allowed_access_levels is not None:
+            if not allowed_access_levels:
+                return []
+
+            where = {
+                "access_level": {
+                    "$in": list(allowed_access_levels)
+                }
+            }
 
         result = self.collection.query(
             query_embeddings=[[float(value) for value in query_embedding]],
             n_results=min(top_k, self.collection.count()),
+            where=where,
             include=["documents", "metadatas", "distances"],
         )
 
