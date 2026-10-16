@@ -5,7 +5,11 @@ from app.services.indexing_service import IndexingService
 
 
 class FakeIngestionService:
-    def ingest_file(self, file_path: Path) -> list[Document]:
+    def __init__(self):
+        self.received_access_level = None
+        
+    def ingest_file(self, file_path: Path,access_level: str = "public",) -> list[Document]:
+        self.received_access_level = access_level
         return [
             Document(
                 page_content="Annual leave policy",
@@ -15,6 +19,7 @@ class FakeIngestionService:
                     "content_hash": "hash-1",
                     "chunk_id": "0",
                     "chunk_count": 1,
+                    "access_level": access_level,
                 },
             )
         ]
@@ -62,3 +67,24 @@ def test_index_file_replaces_existing_document():
 
     assert len(vector_store.documents) == 1
     assert len(vector_store.embeddings) == 1
+    
+    
+    
+def test_index_file_passes_access_level_to_ingestion():
+    ingestion_service = FakeIngestionService()
+    embedding_service = FakeEmbeddingService()
+    vector_store = FakeVectorStore()
+
+    service = IndexingService(
+        ingestion_service=ingestion_service,
+        embedding_service=embedding_service,
+        vector_store=vector_store,
+    )
+
+    service.index_file(
+        Path("hr_policy.txt"),
+        access_level="hr",
+    )
+
+    assert ingestion_service.received_access_level == "hr"
+    assert vector_store.documents[0].metadata["access_level"] == "hr"
