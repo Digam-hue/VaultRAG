@@ -22,5 +22,6 @@ class VectorStore(Protocol):
         self,
         query_embedding: EmbeddingVector,
         top_k: int = 5,
+        allowed_access_levels: Sequence[str] | None = None,#new
     ) -> list[dict]:
         ...
