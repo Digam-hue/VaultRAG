@@ -21,7 +21,10 @@ class IngestionService:
         self.documents_dir = documents_dir.resolve()
         self.config = config or IngestionConfig()
 
-    def ingest_file(self, file_path: Path) -> list[Document]:
+    def ingest_file(
+        self, file_path: Path,
+        access_level: str = "public",) -> list[Document]:
+        
         path = file_path.resolve()
 
         # Prevent paths outside the configured knowledge directory.
@@ -60,4 +63,5 @@ class IngestionService:
             source=source_key,
             document_id=document_id,
             content_hash=content_hash,
+            access_level=access_level,
         )
